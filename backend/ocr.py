@@ -5,41 +5,61 @@ import os
 import sys
 import io
 import ocrmypdf
-import base64
-base64.encodestring = base64.encodebytes
-base64.decodestring = base64.decodebytes
+from zipfile import ZipFile
+from typing import List, Dict
+# import base64
+# base64.encodestring = base64.encodebytes
+# base64.decodestring = base64.decodebytes
 
 
-def ocr(input_bytes: UploadFile, test=False) -> io.BytesIO:
+class OCR_utilities:
 
-    TEMP_FOLDER = 'temp'
-    OUTPUT_TEMP_FILE = 'temp/temp_ocred.pdf'
+    class File:
+        def __init__(self, filename: str, content: bytes):
+            self.filename = filename
+            self.content = content
 
-    # create temporary folder if it doesn't exist
-    if not os.path.exists('temp'):
-        os.makedirs('temp')
+    @staticmethod
+    def ocr_document(input_bytes: io.BytesIO, file_name: str) -> io.BytesIO:
+        TEMP_FOLDER = 'temp'
+        INPUT_TEMP_FILE = f'temp/{file_name}.pdf'
+        OUTPUT_TEMP_FILE = f'temp/{file_name}_ocred.pdf'
 
-    input_file_name = 'temp/temp.pdf'
-    with open(input_file_name, 'wb') as f:
-        # with io.FileIO(input_bytes) as f2:
+        # create temporary folder if it doesn't exist
+        if not os.path.exists(TEMP_FOLDER):
+            os.makedirs(TEMP_FOLDER)
 
-        reader = PdfReader(input_bytes)
-        writer = PdfWriter()
+        with open(f'temp/{file_name}.pdf', 'wb') as f:
+            reader = PdfReader(input_bytes)
+            writer = PdfWriter()
 
-        print(len(reader.pages))
+            # print(len(reader.pages))
+            for page in reader.pages:
+                writer.add_page(page)
 
-        for page in reader.pages:
-            writer.add_page(page)
+            writer.write(f)
 
-        writer.write(f)
+        ocrmypdf.ocr(INPUT_TEMP_FILE, OUTPUT_TEMP_FILE, force_ocr=True,
+                     language='eng', output_type='pdf', use_threads=True)
 
-    ocrmypdf.ocr(input_file_name, OUTPUT_TEMP_FILE, force_ocr=True,
-                 language='eng', output_type='pdf', use_threads=True)
+        with open(OUTPUT_TEMP_FILE, 'rb') as f:
+            # output = io.FileIO(f.read())
+            out_bytes = f.read()
 
-    with open(OUTPUT_TEMP_FILE, 'rb') as f:
-        output = io.FileIO(f.read())
+        os.remove(INPUT_TEMP_FILE)
+        os.remove(OUTPUT_TEMP_FILE)
 
-        return output
+        return out_bytes
+
+    @staticmethod
+    def zip_files(files: List[File]) -> io.BytesIO:
+        archive = io.BytesIO()
+
+        with ZipFile(archive, 'w') as zip:
+            for file in files:
+                zip.writestr(file.filename, file.content)
+
+        return archive
 
 
 # if __name__ == "__main__":

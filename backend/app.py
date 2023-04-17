@@ -4,46 +4,11 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import HTMLResponse, Response
 from PyPDF2 import PdfReader, PdfWriter
 from zipfile import ZipFile
-import ocrmypdf
 import io
-import os
+
+from ocr import OCR_utilities
 
 app = FastAPI()
-
-
-def ocr(input_bytes: UploadFile, file_name: str) -> io.BytesIO:
-
-    TEMP_FOLDER = 'temp'
-    INPUT_TEMP_FILE = f'temp/{file_name}.pdf'
-    OUTPUT_TEMP_FILE = f'temp/{file_name}_ocred.pdf'
-
-    # create temporary folder if it doesn't exist
-    if not os.path.exists('temp'):
-        os.makedirs('temp')
-
-    with open(f'temp/{file_name}.pdf', 'wb') as f:
-
-        reader = PdfReader(input_bytes)
-        writer = PdfWriter()
-
-        print(len(reader.pages))
-
-        for page in reader.pages:
-            writer.add_page(page)
-
-        writer.write(f)
-
-    ocrmypdf.ocr(INPUT_TEMP_FILE, OUTPUT_TEMP_FILE, force_ocr=True,
-                 language='eng', output_type='pdf', use_threads=True)
-
-    with open(OUTPUT_TEMP_FILE, 'rb') as f:
-        # output = io.FileIO(f.read())
-        out_bytes = f.read()
-
-    os.remove(INPUT_TEMP_FILE)
-    os.remove(OUTPUT_TEMP_FILE)
-
-    return out_bytes
 
 
 @app.post("/files/")
@@ -53,24 +18,21 @@ async def create_files(files: Annotated[List[bytes], File()]):
 
 @app.post("/uploadfiles/")
 async def create_upload_files(files: List[UploadFile]):
-    result = []
+    result: List[OCR_utilities.File] = []
 
     for file in files:
         contents = await file.read()
-        out = ocr(io.BytesIO(contents), file.filename)
+        out = OCR_utilities.ocr_document(io.BytesIO(contents), file.filename)
         print(file.filename, len(contents))
-        # result[file.filename] = out
-        result.append({
-            "filename": file.filename,
-            "content_type": "application/pdf",
-            "content": out,
-        })
+        result.append(OCR_utilities.File(file.filename, out))
 
-    archive = io.BytesIO()
+        # result.append({
+        #     "filename": file.filename,
+        #     "content_type": "application/pdf",
+        #     "content": out,
+        # })
 
-    with ZipFile(archive, 'w') as zip:
-        for file in result:
-            zip.writestr(file['filename'], file['content'])
+    archive = OCR_utilities.zip_files(result)
 
     response = Response(
         content=archive.getvalue(), media_type="application/x-zip-compressed")
