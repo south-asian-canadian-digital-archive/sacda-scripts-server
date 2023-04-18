@@ -20,7 +20,7 @@ class OCR_utilities:
             self.content = content
 
     @staticmethod
-    def ocr_document(input_bytes: io.BytesIO, file_name: str) -> io.BytesIO:
+    def ocr_document(input_bytes: io.BytesIO, file_name: str, language: str = "eng") -> io.BytesIO:
         TEMP_FOLDER = 'temp'
         INPUT_TEMP_FILE = f'temp/{file_name}.pdf'
         OUTPUT_TEMP_FILE = f'temp/{file_name}_ocred.pdf'
@@ -39,8 +39,13 @@ class OCR_utilities:
 
             writer.write(f)
 
-        ocrmypdf.ocr(INPUT_TEMP_FILE, OUTPUT_TEMP_FILE, force_ocr=True,
-                     language='eng', output_type='pdf', use_threads=True)
+        try:
+            ocrmypdf.ocr(INPUT_TEMP_FILE, OUTPUT_TEMP_FILE,
+                         language=language, output_type='pdf', use_threads=True)
+        except ocrmypdf.PriorOcrFoundError:
+            print('Prior OCR found, skipping')
+            os.remove(INPUT_TEMP_FILE)
+            return input_bytes
 
         with open(OUTPUT_TEMP_FILE, 'rb') as f:
             # output = io.FileIO(f.read())
