@@ -1,4 +1,5 @@
 import csv
+import requests
 import uuid
 from pypdf import PdfReader, PdfWriter
 from fastapi import File, UploadFile
@@ -88,6 +89,13 @@ class OCR_utilities:
                     files.append(OCR_utilities.File(name, f.read()))
 
         return files
+
+    @classmethod
+    def fetch_metadata_file(link: str) -> io.BytesIO:
+        # gviz/tq?tqx=out:csv
+        response = requests.get(
+            "/".join([*link.split('/')[0:-1], 'gviz/tq?tqx=out:csv']))
+        return io.BytesIO(response.content)
 
     @classmethod
     def parse_metadata_file(cls, csv_file: io.BytesIO) -> List[File]:

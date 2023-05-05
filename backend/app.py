@@ -1,5 +1,6 @@
-from typing import List
-from fastapi import FastAPI, File, UploadFile
+from typing import List, Optional, Union
+from typing_extensions import Annotated
+from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import HTMLResponse, Response
 import io
 
@@ -39,7 +40,14 @@ async def create_upload_files(files: List[UploadFile]):
 
 
 @app.post("/ocr-collection/")
-async def process_collection(metadata_file: UploadFile, collection_zip: UploadFile):
+async def process_collection(
+    collection_zip: Annotated[UploadFile, File()],
+    metadata_file: Union[Annotated[UploadFile, File()], None] = None,
+    metadata_file_link: Union[Annotated[str, Form()], None] = None
+):
+    if metadata_file_link:
+        metadata_file = OCR_utilities.fetch_metadata_file(
+            metadata_file_link)
     metadata_contents = await metadata_file.read()
     collection_contents = await collection_zip.read()
 
