@@ -1,5 +1,6 @@
-from pathlib import Path
-from PyPDF2 import PdfReader, PdfWriter
+import csv
+import uuid
+from pypdf import PdfReader, PdfWriter
 from fastapi import File, UploadFile
 import os
 import sys
@@ -7,33 +8,34 @@ import io
 import ocrmypdf
 from zipfile import ZipFile
 from typing import List, Dict
-# import base64
-# base64.encodestring = base64.encodebytes
-# base64.decodestring = base64.decodebytes
 
 
 class OCR_utilities:
 
     class File:
-        def __init__(self, filename: str, content: bytes):
+        def __init__(self, filename: str, content: bytes, language: str = "eng"):
             self.filename = filename
             self.content = content
+            self.language = language
 
     @staticmethod
     def ocr_document(input_bytes: io.BytesIO, file_name: str, language: str = "eng") -> io.BytesIO:
         TEMP_FOLDER = 'temp'
-        INPUT_TEMP_FILE = f'temp/{file_name}.pdf'
-        OUTPUT_TEMP_FILE = f'temp/{file_name}_ocred.pdf'
+        RANDOM_TEMP_NAME = uuid.uuid4().hex
+        INPUT_TEMP_FILE = f'temp/{RANDOM_TEMP_NAME}.pdf'
+        OUTPUT_TEMP_FILE = f'temp/{RANDOM_TEMP_NAME}_ocred.pdf'
 
         # create temporary folder if it doesn't exist
         if not os.path.exists(TEMP_FOLDER):
             os.makedirs(TEMP_FOLDER)
 
-        with open(f'temp/{file_name}.pdf', 'wb') as f:
-            reader = PdfReader(input_bytes)
+        with open(INPUT_TEMP_FILE, 'wb') as f:
+            if type(input_bytes) == bytes:
+                reader = PdfReader(io.BytesIO(input_bytes), strict=False)
+            else:
+                reader = PdfReader(input_bytes, strict=False)
             writer = PdfWriter()
 
-            # print(len(reader.pages))
             for page in reader.pages:
                 writer.add_page(page)
 
@@ -45,10 +47,20 @@ class OCR_utilities:
         except ocrmypdf.PriorOcrFoundError:
             print('Prior OCR found, skipping')
             os.remove(INPUT_TEMP_FILE)
-            return input_bytes
+            if type(input_bytes) == bytes:
+                return input_bytes
+            else:
+                return input_bytes.getvalue()
+        except ocrmypdf.SubprocessOutputError:
+            print('Subprocess error')
+            os.remove(INPUT_TEMP_FILE)
+            if type(input_bytes) == bytes:
+                return input_bytes
+            else:
+                return input_bytes.getvalue()
 
         with open(OUTPUT_TEMP_FILE, 'rb') as f:
-            # output = io.FileIO(f.read())
+            # f.name = f'{file_name}_ocred.pdf'
             out_bytes = f.read()
 
         os.remove(INPUT_TEMP_FILE)
@@ -56,8 +68,8 @@ class OCR_utilities:
 
         return out_bytes
 
-    @staticmethod
-    def zip_files(files: List[File]) -> io.BytesIO:
+    @classmethod
+    def zip_files(cls, files: List[File]) -> io.BytesIO:
         archive = io.BytesIO()
 
         with ZipFile(archive, 'w') as zip:
@@ -66,13 +78,57 @@ class OCR_utilities:
 
         return archive
 
+    @classmethod
+    def unzip_files(cls, file: io.BytesIO) -> List[File]:
+        files: List[cls.File] = []
 
-# if __name__ == "__main__":
-#     if len(sys.argv) > 1:
-#         with open(sys.argv[1], 'rb') as f:
-#             # inbytes = io.FileIO(f.read())
-#             print(len(f.read()), len(PdfReader(f).pages))
-#             output = ocr(f, test=True)
+        with ZipFile(file) as zip:
+            for name in zip.namelist():
+                with zip.open(name) as f:
+                    files.append(OCR_utilities.File(name, f.read()))
 
-#     else:
-#         print("Please provide a file path as an argument.")
+        return files
+
+    @classmethod
+    def parse_metadata_file(cls, csv_file: io.BytesIO) -> List[File]:
+        extracted_data: List[cls.File] = []
+        # TEMP_FILE_PATH = "temp/metadata.csv"
+
+        reader = csv.reader(csv_file.getvalue().decode('utf-8').splitlines())
+
+        headers = next(reader)
+
+        try:
+            filename_full_index = headers.index("Access Identifier")
+        except ValueError:
+            filename_full_index = headers.index("accessIdentifier")
+
+        language_index = headers.index("language")
+        for row in reader:
+            filename_full = f'{row[filename_full_index]}.pdf'
+            language = row[language_index] if row[language_index] != "" else "eng"
+
+            extracted_data.append(cls.File(filename_full, None, language))
+
+        return extracted_data
+
+    @classmethod
+    def process_collection(cls, metadata: List[File], collection: List[File]):
+
+        processed_collection: List[File] = collection
+
+        for collection_file_index in range(len(collection)):
+            for metadata_file in metadata:
+                parsed_filename = collection[collection_file_index].filename.split(
+                    "/")[-1]
+                if metadata_file.filename == parsed_filename:
+                    # print(
+                    #     f"parsed_filename: {parsed_filename}, metadata_file.filename: {metadata_file.filename}")
+                    processed_collection[collection_file_index] = cls.File(
+                        collection[collection_file_index].filename,
+                        cls.ocr_document(
+                            collection[collection_file_index].content, collection[collection_file_index].filename, metadata_file.language),
+                        metadata_file.language
+                    )
+
+        return processed_collection
