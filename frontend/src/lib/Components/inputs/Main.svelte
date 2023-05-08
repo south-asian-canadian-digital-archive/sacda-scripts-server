@@ -9,6 +9,7 @@
 	export let dangerMessage: string = '';
 	export let readonly: boolean = false;
 	export let autofocus: boolean = false;
+	export let name: string = '';
 
 	const dispatch = createEventDispatcher();
 
@@ -35,6 +36,7 @@
 		{placeholder}
 		{readonly}
 		{autofocus}
+		{name}
 	/>
 	{#if danger}
 		<caption class="text-[#D75870] text-xs">

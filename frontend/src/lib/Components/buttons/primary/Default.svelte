@@ -5,6 +5,7 @@
 </script>
 
 <button
+	type="submit"
 	on:keydown
 	on:click
 	{disabled}
@@ -36,7 +37,7 @@
 	}
 
 	.lg {
-		@apply py-[17px] px-7 font-semibold text-base text-white rounded-14;
+		@apply py-[17px] px-7 font-semibold text-base text-white rounded-[14px];
 	}
 
 	.disabled {

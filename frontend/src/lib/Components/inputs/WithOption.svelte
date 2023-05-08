@@ -24,6 +24,7 @@
 	export let focus = false;
 	export let readonly = false;
 	export let cursorPointer = false;
+	export let name = '';
 
 	export let searchValue = '';
 
@@ -95,6 +96,7 @@
 				}}
 				{placeholder}
 				{readonly}
+				{name}
 				class:cursor-pointer={cursorPointer}
 			/>
 		</div>

@@ -22,7 +22,7 @@ async def create_files(zip_file: UploadFile):
 
 
 @app.post("/ocr-files/")
-async def create_upload_files(files: List[UploadFile]):
+async def create_upload_files(files: List[UploadFile], language: Union[str, None] = None, output_type: Union[str, None] = None):
     result: List[OCR_utilities.File] = []
 
     for file in files:
@@ -43,8 +43,10 @@ async def create_upload_files(files: List[UploadFile]):
 async def process_collection(
     collection_zip: Annotated[UploadFile, File()],
     metadata_file: Union[Annotated[UploadFile, File()], None] = None,
-    metadata_file_link: Union[Annotated[str, Form()], None] = None
+    metadata_file_link: Union[Annotated[str, Form()], None] = None,
+    metadata_type: Union[str, None] = None,
 ):
+
     if metadata_file_link:
         metadata_file = OCR_utilities.fetch_metadata_file(
             metadata_file_link)

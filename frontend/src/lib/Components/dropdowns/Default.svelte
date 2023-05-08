@@ -9,6 +9,7 @@
 	export let placeholder = '';
 	export let danger: boolean = false;
 	export let dangerMessage: string = '';
+	export let name: string = '';
 
 	export let multiple = false;
 	export let value = '';
@@ -57,6 +58,7 @@
 		readonly={!notReadOnly}
 		cursorPointer={!notReadOnly}
 		on:submit
+		bind:name
 	>
 		<slot name="icon">
 			<div

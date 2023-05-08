@@ -7,7 +7,9 @@
 	export let files: FileList | null;
 	export let label = '';
 	export let caption = '';
-
+	export let multiple = false;
+	export let accept = '';
+	export let name: string = '';
 	export let danger: boolean = false;
 	export let dangerMessage: string = '';
 
@@ -22,45 +24,51 @@
 	<label class="text-[#47675B] font-medium text-sm" for="">
 		{#if label}{label}{:else}&nbsp;{/if}
 	</label>
-	<div
-		class="input-selected flex flex-row gap-3 items-center justify-center w-full text-[#66857D] min-h-[54px] border border-dashed border-[#D0DDD7] rounded-[14px] p-4 outline-none ease-out duration-100 cursor-pointer select-none"
-		class:input-danger={danger}
-		class:files
-		on:click={() => {
-			input?.click();
-		}}
-		on:keydown
-		on:dragover={(e) => {
-			// console.log('dragover');
-			e.preventDefault();
-		}}
-		on:drop={(e) => {
-			files = e.dataTransfer?.files || null;
-			dispatch('change', files);
+	<div class="w-full relative flex items-center">
+		<div
+			class="input-selected flex flex-row gap-3 items-center justify-center w-full text-[#66857D] min-h-[54px] border border-dashed border-[#D0DDD7] rounded-[14px] p-4 outline-none ease-out duration-100 cursor-pointer select-none"
+			class:input-danger={danger}
+			class:files
+			on:click={() => {
+				input?.click();
+			}}
+			on:keydown
+			on:dragover={(e) => {
+				// console.log('dragover');
+				e.preventDefault();
+			}}
+			on:drop={(e) => {
+				files = e.dataTransfer?.files || null;
+				dispatch('change', files);
 
-			e.preventDefault();
-		}}
-	>
+				e.preventDefault();
+			}}
+		>
+			{#if files}
+				<div class="flex flex-row justify-between w-full items-center">
+					<span class="flex flex-row items-center gap-1 text-[#1D3932]">
+						<PlayCircle />
+						{files[0].name}
+						{#if files.length > 1}+{files.length - 1}{/if}
+					</span>
+				</div>
+			{:else}
+				<DocumentUpload />
+				<span>Upload file</span>
+			{/if}
+			<input type="file" bind:files hidden {multiple} {name} {accept} bind:this={input} />
+		</div>
 		{#if files}
-			<div class="flex flex-row justify-between w-full items-center">
-				<span class="flex flex-row items-center gap-1 text-[#1D3932]">
-					<PlayCircle />
-					{files[0].name}
-				</span>
-				<span
-					on:click|stopPropagation={() => {
-						files = null;
-					}}
-					on:keydown
-				>
-					<Close color="#47675B" size="20" />
-				</span>
-			</div>
-		{:else}
-			<DocumentUpload />
-			<span>Upload file</span>
+			<span
+				class="absolute right-3 cursor-pointer"
+				on:click|stopPropagation={() => {
+					files = null;
+				}}
+				on:keydown
+			>
+				<Close color="#47675B" size="20" />
+			</span>
 		{/if}
-		<input type="file" bind:files hidden bind:this={input} />
 	</div>
 	{#if danger}
 		<caption class="text-[#D75870] text-xs">
