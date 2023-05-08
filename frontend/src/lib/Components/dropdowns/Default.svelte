@@ -122,7 +122,7 @@
 
 <style type="postcss">
 	.dropdown {
-		@apply overflow-y-auto absolute z-50 bg-white w-full max-h-[200px] rounded-10 border border-[#EAF0ED] text-sm font-medium flex flex-col;
+		@apply overflow-y-auto absolute z-50 bg-white w-full max-h-[200px] rounded-[10px] border border-[#EAF0ED] text-sm font-medium flex flex-col;
 		box-shadow: 0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03);
 	}
 </style>

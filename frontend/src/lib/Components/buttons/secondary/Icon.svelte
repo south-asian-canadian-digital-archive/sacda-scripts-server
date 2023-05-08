@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Activity from '$lib/Icons/updates/activity.svelte';
+	import Activity from '$lib/Icons/activity.svelte';
 
 	export let disabled: boolean = false;
 	export let size: 'xs' | 'sm' | 'md' | 'lg' = 'md';

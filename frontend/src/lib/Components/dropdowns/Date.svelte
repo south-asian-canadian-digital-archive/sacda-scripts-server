@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { clickOutside } from '$utils/clickOutside';
+	import { clickOutside } from '../../../utils/clickOutside';
 	import { fly, slide } from 'svelte/transition';
 	import IconRightInteractive from '../inputs/IconRightInteractive.svelte';
 	import DefaultDatepicker from '../datepickers/Default.svelte';
-	import CalendarWithDate from '$lib/Icons/updates/CalendarWithDate.svelte';
-	import Close from '$lib/Icons/updates/Close.svelte';
+	import CalendarWithDate from '../../Icons/CalendarWithDate.svelte';
+	import Close from '../../Icons/Close.svelte';
 
-	export let label;
-	export let selectedDate: Date = null;
-	export let caption;
+	export let label: string;
+	export let selectedDate: Date | null = null;
+	export let caption: string;
 	export let danger: boolean = false;
 	export let dangerMessage: string = '';
 
@@ -24,7 +24,7 @@
 		dropdownOpen = inputFocused || dropdownClicked;
 	}
 
-	const isSameDate = (date1, date2) => {
+	const isSameDate = (date1: Date, date2: Date) => {
 		return (
 			date1.getFullYear() === date2.getFullYear() &&
 			date1.getMonth() === date2.getMonth() &&

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import InfoRight from './InfoRight.svelte';
 
-	export let value;
+	export let value: string;
 	export let label = '';
 	export let caption = '';
 	export let text = '';

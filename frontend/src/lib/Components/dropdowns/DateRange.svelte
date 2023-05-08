@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { clickOutside } from '$utils/clickOutside';
+	import { clickOutside } from '../../../utils/clickOutside';
 	import { fly, slide } from 'svelte/transition';
 	import IconRightInteractive from '../inputs/IconRightInteractive.svelte';
 	import RangeDatepicker from '../datepickers/Range.svelte';
-	import Close from '$lib/Icons/updates/Close.svelte';
-	import Calendar from '$lib/Icons/updates/Calendar.svelte';
+	import Close from '$lib/Icons/Close.svelte';
+	import Calendar from '$lib/Icons/Calendar.svelte';
 
-	export let label;
-	export let caption;
-	export let startDate: Date = null;
-	export let endDate: Date = null;
+	export let label: string;
+	export let caption: string;
+	export let startDate: Date | null = null;
+	export let endDate: Date | null = null;
 	export let selectedRange: Date[] = [];
 	export let danger: boolean = false;
 	export let dangerMessage: string = '';

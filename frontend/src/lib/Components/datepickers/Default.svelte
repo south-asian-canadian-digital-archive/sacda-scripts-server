@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
 	import { createEventDispatcher } from 'svelte';
-	import Arrow from '$lib/Icons/updates/Arrow.svelte';
+	import Arrow from '$lib/Icons/Arrow.svelte';
 	import { fly } from 'svelte/transition';
 
 	export let today = new Date(); // Date
@@ -9,7 +9,10 @@
 	export let month = today.getMonth(); // Jan
 	export let offset = 0; // Sun
 
-	export let selectedDate = null;
+	/**
+	 * @type {Date | null}
+	 */
+	 export let selectedDate = null;
 
 	export let labels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 	export let months = [

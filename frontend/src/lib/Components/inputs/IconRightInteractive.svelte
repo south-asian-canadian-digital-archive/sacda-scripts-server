@@ -1,9 +1,9 @@
 <script lang="ts">
-	import Calendar from '$lib/Icons/updates/Calendar.svelte';
-	import { clickOutside } from '$utils/clickOutside';
+	import Calendar from '../../Icons/Calendar.svelte';
+	import { clickOutside } from '../../../utils/clickOutside';
 	import { createEventDispatcher } from 'svelte';
 
-	export let value;
+	export let value: string;
 	export let label = '';
 	export let caption = '';
 	export let placeholder = 'Enter here';

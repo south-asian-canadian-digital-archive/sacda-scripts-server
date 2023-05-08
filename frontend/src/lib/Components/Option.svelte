@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Close from '$lib/Icons/updates/Close.svelte';
+	import Close from '../Icons/Close.svelte';
 	import { createEventDispatcher } from 'svelte';
 
 	export let option: {

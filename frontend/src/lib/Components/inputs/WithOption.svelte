@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Arrow from '$lib/Icons/updates/Arrow.svelte';
+	import Arrow from '../../Icons/Arrow.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import Option from '../Option.svelte';
-	import { clickOutside } from '$utils/clickOutside';
+	import { clickOutside } from '../../../utils/clickOutside';
 
 	export let selectedValues: {
 		icon: string;
@@ -56,7 +56,7 @@
 		{#if label}{label}{:else}&nbsp;{/if}
 	</label>
 	<div
-		class="relative w-full flex items-center pr-11 min-h-[54px] border border-[#D0DDD7] rounded-14 p-4 ease-out duration-100"
+		class="relative w-full flex items-center pr-11 min-h-[54px] border border-[#D0DDD7] rounded-[14px] p-4 ease-out duration-100"
 		use:clickOutside
 		on:keydown
 		on:click={() => {

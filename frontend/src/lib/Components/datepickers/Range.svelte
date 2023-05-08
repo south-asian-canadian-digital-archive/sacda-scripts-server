@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
 	import { createEventDispatcher } from 'svelte';
-	import Arrow from '$lib/Icons/updates/Arrow.svelte';
+	import Arrow from '$lib/Icons/Arrow.svelte';
 	import { writable } from 'svelte/store';
 
 	export let today = new Date(); // Date

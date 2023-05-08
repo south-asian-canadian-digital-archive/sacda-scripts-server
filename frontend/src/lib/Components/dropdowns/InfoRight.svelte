@@ -1,13 +1,13 @@
 <script lang="ts">
-	import InputWithOption from '$lib/Components/updates/inputs/WithOption.svelte';
-	import Arrow from '$lib/Icons/updates/Arrow.svelte';
-	import { clickOutside } from '$utils/clickOutside';
+	import InputWithOption from '$lib/Components/inputs/WithOption.svelte';
+	import Arrow from '$lib/Icons/Arrow.svelte';
+	import { clickOutside } from '../../../utils/clickOutside';
 	import { slide } from 'svelte/transition';
 	import InfoRight from '../inputs/InfoRight.svelte';
 
-	export let label;
+	export let label: string;
 	export let value = '';
-	export let caption;
+	export let caption: string;
 	export let placeholder = '';
 	export let danger: boolean = false;
 	export let dangerMessage: string = '';

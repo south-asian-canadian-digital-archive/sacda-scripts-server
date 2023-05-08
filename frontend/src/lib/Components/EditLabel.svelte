@@ -1,7 +1,7 @@
 <script>
-	import Close from '$lib/Icons/updates/Close.svelte';
-	import Edit from '$lib/Icons/updates/Edit.svelte';
-	import TickCircle from '$lib/Icons/updates/tick-circle.svelte';
+	import Close from '../Icons/Close.svelte';
+	import Edit from '../Icons/Edit.svelte';
+	import TickCircle from '../Icons/tick-circle.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
 

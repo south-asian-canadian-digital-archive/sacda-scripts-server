@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
 	import Default from './Default.svelte';
-	import Close from '$lib/Icons/updates/Close.svelte';
-	import Loader from '$lib/Icons/updates/Loader.svelte';
-	import Input from '$components/updates/inputs/Main.svelte';
-	import ButtonPrimary from '$components/updates/buttons/primary/Default.svelte';
-	import ButtonSecondary from '$components/updates/buttons/secondary/Default.svelte';
+	import Close from '$lib/Icons/Close.svelte';
+	import Loader from '$lib/Icons/Loader.svelte';
+	import Input from '../inputs/Main.svelte';
+	import ButtonPrimary from '../buttons/primary/Default.svelte';
+	import ButtonSecondary from '../buttons/secondary/Default.svelte';
 	import { createEventDispatcher } from 'svelte';
-	import Warning from '$lib/Icons/updates/warning.svelte';
+	import Warning from '$lib/Icons/warning.svelte';
 
-	export let label;
-	export let caption;
-	export let value;
+	export let label: string;
+	export let caption: string;
+	export let value: string;
 	export let options: string[] = [];
 	export let placeholder = '';
 	export let danger: boolean = false;

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import InfoLeft from './InfoLeft.svelte';
 
-	export let value;
+	export let value: string;
 	export let label = '';
 	export let caption = '';
 	export let text = '';

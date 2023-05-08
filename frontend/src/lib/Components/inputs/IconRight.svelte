@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Arrow from '$lib/Icons/updates/Arrow.svelte';
+	import Arrow from '../../Icons/Arrow.svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	export let value;
+	export let value: string;
 	export let label = '';
 	export let caption = '';
 	export let placeholder = 'Enter here';

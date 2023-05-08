@@ -1,9 +1,9 @@
 <script lang="ts">
-	import Edit from '$lib/Icons/updates/Edit.svelte';
+	import Edit from '../../Icons/Edit.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import EditLabel from '../EditLabel.svelte';
 
-	export let value;
+	export let value: string;
 	export let label = '';
 	export let caption = '';
 	export let maxLength = 250;

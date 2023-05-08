@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import EditLabel from '../EditLabel.svelte';
 
-	export let value;
+	export let value: string;
 	export let label = '';
 	export let caption = '';
 	export let placeholder = 'Enter here';

@@ -2,9 +2,9 @@
 	import { slide } from 'svelte/transition';
 	import InfoRightDefault from './InfoRight.svelte';
 
-	export let label;
-	export let caption;
-	export let value;
+	export let label: string;
+	export let caption: string;
+	export let value: string;
 	export let placeholder = '';
 	export let danger: boolean = false;
 	export let dangerMessage: string = '';
