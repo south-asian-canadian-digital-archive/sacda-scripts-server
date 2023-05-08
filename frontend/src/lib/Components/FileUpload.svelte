@@ -23,7 +23,7 @@
 		{#if label}{label}{:else}&nbsp;{/if}
 	</label>
 	<div
-		class="input-selected flex flex-row gap-3 items-center justify-center w-full text-[#66857D] min-h-[54px] border border-dashed border-[#D0DDD7] rounded-14 p-4 outline-none ease-out duration-100 cursor-pointer select-none"
+		class="input-selected flex flex-row gap-3 items-center justify-center w-full text-[#66857D] min-h-[54px] border border-dashed border-[#D0DDD7] rounded-[14px] p-4 outline-none ease-out duration-100 cursor-pointer select-none"
 		class:input-danger={danger}
 		class:files
 		on:click={() => {

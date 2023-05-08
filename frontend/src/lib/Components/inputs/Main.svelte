@@ -24,7 +24,7 @@
 	<!-- svelte-ignore a11y-autofocus -->
 	<input
 		type="text"
-		class="input-selected w-full min-h-[54px] border border-[#D0DDD7] rounded-14 p-4 placeholder:text-[#98B3AB] text-[#47675B] outline-none ease-out duration-100"
+		class="input-selected w-full min-h-[54px] border border-[#D0DDD7] rounded-[14px] p-4 placeholder:text-[#98B3AB] text-[#47675B] outline-none ease-out duration-100"
 		class:input-danger={danger}
 		bind:value
 		on:keydown={(event) => {
