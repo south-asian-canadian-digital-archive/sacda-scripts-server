@@ -15,20 +15,6 @@
 
 	const uploadSingle = () => {
 		console.log(language, outputType, singleDocFile);
-
-		// if (!singleDocFile) {
-		// 	alert('Please select a file');
-		// 	return;
-		// }
-
-		// let formData = new FormData();
-		// formData.append('language', language);
-		// formData.append('outputType', outputType);
-		// formData.append(
-		// 	'files',
-		// 	new Blob([singleDocFile[0]], { type: singleDocFile[0].type }),
-		// 	singleDocFile[0].name
-		// );
 	};
 	const uploadCollection = () => {};
 </script>

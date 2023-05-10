@@ -4,6 +4,8 @@ from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import HTMLResponse, Response
 import io
 import asyncio
+import threading
+import concurrent.futures
 
 from ocr import OCR_utilities
 
@@ -25,24 +27,25 @@ async def create_files(zip_file: UploadFile):
 @app.post("/ocr-files/")
 async def create_upload_files(files: List[UploadFile], language: Union[str, None] = None, output_type: Union[str, None] = None):
     result: List[OCR_utilities.File] = []
-    coroutines = []
+    tasks = []
+
+    def ocr_wrapper(file: io.BytesIO, file_name: str):
+        print(file_name, 'started')
+        out = OCR_utilities.ocr_document(file, file_name)
+        result.append(OCR_utilities.File(file_name, out))
+        print('done')
 
     try:
-        for file in files:
-            contents = await file.read()
-            out = OCR_utilities.ocr_document(
-                io.BytesIO(contents), file.filename)
-            coroutines.append(asyncio.create_task(out))
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+            for file in files:
+                contents = await file.read()
+                tasks.append(executor.submit(ocr_wrapper, io.BytesIO(
+                    contents), file.filename))
+                print(file.filename, 'submitted')
+            concurrent.futures.wait(tasks)
     except Exception as e:
         print(e)
         return Response(content=e.__str__(), media_type="text/plain")
-
-    await asyncio.gather(*coroutines)
-
-    for i in range(len(files)):
-        print(files[i].filename, len(coroutines[i].result()))
-        result.append(OCR_utilities.File(
-            files[i].filename, coroutines[i].result()))
 
     archive = OCR_utilities.zip_files(result)
 
@@ -70,7 +73,6 @@ async def process_collection(
         io.BytesIO(collection_contents))
     parsed_metadata: io.BytesIO = OCR_utilities.parse_metadata_file(
         io.BytesIO(metadata_contents))
-    # metadata_contents)
 
     processed_collection: List[OCR_utilities.File] = OCR_utilities.process_collection(
         parsed_metadata, unzipped_collection)
