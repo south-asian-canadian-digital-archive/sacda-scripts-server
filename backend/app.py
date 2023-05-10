@@ -3,6 +3,7 @@ from typing_extensions import Annotated
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import HTMLResponse, Response
 import io
+import asyncio
 
 from ocr import OCR_utilities
 
@@ -24,17 +25,24 @@ async def create_files(zip_file: UploadFile):
 @app.post("/ocr-files/")
 async def create_upload_files(files: List[UploadFile], language: Union[str, None] = None, output_type: Union[str, None] = None):
     result: List[OCR_utilities.File] = []
+    coroutines = []
 
     try:
         for file in files:
             contents = await file.read()
             out = OCR_utilities.ocr_document(
                 io.BytesIO(contents), file.filename)
-            print(file.filename, len(contents))
-            result.append(OCR_utilities.File(file.filename, out))
+            coroutines.append(asyncio.create_task(out))
     except Exception as e:
         print(e)
         return Response(content=e.__str__(), media_type="text/plain")
+
+    await asyncio.gather(*coroutines)
+
+    for i in range(len(files)):
+        print(files[i].filename, len(coroutines[i].result()))
+        result.append(OCR_utilities.File(
+            files[i].filename, coroutines[i].result()))
 
     archive = OCR_utilities.zip_files(result)
 

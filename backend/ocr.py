@@ -20,7 +20,7 @@ class OCR_utilities:
             self.language = language
 
     @staticmethod
-    def ocr_document(input_bytes: io.BytesIO, file_name: str, language: str = "eng") -> io.BytesIO:
+    async def ocr_document(input_bytes: io.BytesIO, file_name: str, language: str = "eng") -> io.BytesIO:
         TEMP_FOLDER = 'temp'
         RANDOM_TEMP_NAME = uuid.uuid4().hex
         INPUT_TEMP_FILE = f'temp/{RANDOM_TEMP_NAME}.pdf'
