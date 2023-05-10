@@ -25,11 +25,16 @@ async def create_files(zip_file: UploadFile):
 async def create_upload_files(files: List[UploadFile], language: Union[str, None] = None, output_type: Union[str, None] = None):
     result: List[OCR_utilities.File] = []
 
-    for file in files:
-        contents = await file.read()
-        out = OCR_utilities.ocr_document(io.BytesIO(contents), file.filename)
-        print(file.filename, len(contents))
-        result.append(OCR_utilities.File(file.filename, out))
+    try:
+        for file in files:
+            contents = await file.read()
+            out = OCR_utilities.ocr_document(
+                io.BytesIO(contents), file.filename)
+            print(file.filename, len(contents))
+            result.append(OCR_utilities.File(file.filename, out))
+    except Exception as e:
+        print(e)
+        return Response(content=e.__str__(), media_type="text/plain")
 
     archive = OCR_utilities.zip_files(result)
 
